@@ -111,7 +111,68 @@ public class Matrix {
 		this.array = arr;
 	}
 	
-	public void scale(double s) {
+	/**
+	 * Determines if this matrix is a square matrix
+	 * @return true if square, false otherwise
+	 */
+	public boolean isSquare() {
+		if(numRows() != numColumns()) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	/**
+	 * Calculate the trace of this matrix, will throw an ArithmeticException if the matrix is not square
+	 * @return trace of this matrix
+	 */
+	public double trace() {
+		double trc = 0.0;
+		if(!isSquare()) {
+			throw new ArithmeticException("Matrix must be square in order to calculate trace()");
+		}
+		else {
+			for(int i=0; i<numRows(); i++) {
+				trc += get(i, i);
+			} 
+		}
+		return trc;
+	}
+	
+	/**
+	 * Fills the diagonal of this matrix with the given value, will throw ArithmeticException if the matrix is not square
+	 * @param x the value to fill into the diagonal
+	 */
+	public void fillDiagonal(double x) {
+		if(!isSquare()) {
+			throw new ArithmeticException("Matrix must be square in order to fill a diagonal");
+		}
+		else {
+			for(int i=0; i<numRows(); i++) {
+				set(i, i, x);
+			} 
+		}
+	}
+	
+	/**
+	 * Set every element in the matrix to the given value
+	 * @param x value to fill the entire matrix with
+	 */
+	public void fillAll(double x) {
+		for(int i=0; i<numRows(); i++) {
+			for(int j=0; j<numColumns(); j++) {
+				set(i, j, x);
+			}
+		}
+	}
+	
+	/**
+	 * Multiplies every element in this matrix by the given value
+	 * @param s scalar value
+	 */
+	public void scaleAll(double s) {
 		for(int i=0; i<numRows(); i++) {
 			for(int j=0; j<numColumns(); j++) {
 				array[i][j] = s*array[i][j];
