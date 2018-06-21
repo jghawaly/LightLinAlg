@@ -57,10 +57,6 @@ public final class LinearAlgebra {
 		var c = new Matrix(new double[a.numRows()][b.numColumns()]);
 		
 		// for row in A
-		// 		for column in B
-		//
-		
-		// for row in A
 		for(int iA=0; iA<a.numRows(); iA++) {
 			// for column in B
 			for(int jB=0; jB<b.numColumns(); jB++) {
@@ -152,5 +148,49 @@ public final class LinearAlgebra {
 		identity.set(columnIndex2, columnIndex1, 1.0);
 		
 		return matrixMultiply(a, identity);
+	}
+	
+	/**
+	 * Perform a linear transformation between two rows in a matrix, for example in order to replace row_1 with row_1 - 3.0*row_5, you would set
+	 * rowIndex1 to 0, rowIndex2 to 4, and scalar to -3.0. An identity matrix I is formed and I[rowIndex1, rowIndex2] is set to the scalar value, which is then
+	 * multiplied by the matrix A, the result of which is returned.
+	 * @param a the matrix to perform the transformation on
+	 * @param rowIndex1 the index of the row to transform
+	 * @param rowIndex2 the index of the row that is used to change the row at rowIndex1 by some scale
+	 * @param scalar The value to multiply that row at row_index2 with
+	 * @return matrix with transformed rows
+	 */
+	public static Matrix linearRowTransform(Matrix a, int rowIndex1, int rowIndex2, double scalar) {
+		var identity = new Matrix(new double[a.numRows()][a.numColumns()]);
+		identity.fillDiagonal(1.0);
+		identity.set(rowIndex1, rowIndex2, scalar);
+		
+		return matrixMultiply(identity, a);
+	}
+	
+	/**
+	 * Perform a linear transformation between two columns in a matrix, for example in order to replace column_1 with column_1 - 3.0*column_5, you would set
+	 * columnIndex1 to 0, columnIndex2 to 4, and scalar to -3.0. An identity matrix I is formed and I[columnIndex2, columnIndex1] is set to the scalar value.
+	 * The matrix A is then multiplied by this identity matrix, the result of which is returned.
+	 * @param a the matrix to perform the transformation on
+	 * @param columnIndex1 the index of the column to transform
+	 * @param columnIndex2 the index of the column that is used to change teh column at columnIndex1 by some scale
+	 * @param scalar The value to multiply the column at column_index2 with
+	 * @return matrix with transformed columns
+	 */
+	public static Matrix linearColumnTransform(Matrix a, int columnIndex1, int columnIndex2, double scalar) {
+		var identity = new Matrix(new double[a.numRows()][a.numColumns()]);
+		identity.fillDiagonal(1.0);
+		identity.set(columnIndex2, columnIndex1, scalar);
+		
+		return matrixMultiply(a, identity);
+	}
+	
+	public static Matrix power(Matrix a, int p) {
+		Matrix b = new Matrix(a.getArray());
+		for(int i=0;i<p-1;i++) {
+			b = matrixMultiply(b, a);
+		}
+		return b;
 	}
 }

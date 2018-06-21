@@ -194,5 +194,13 @@ public class Matrix {
 			System.out.print("|\n");
 		}
 	}
+	
+	/**
+	 * Get the Matrix as a 2D array
+	 * @return 2D double array
+	 */
+	public double[][] getArray() {
+		return array.clone();
+	}
 
 }
