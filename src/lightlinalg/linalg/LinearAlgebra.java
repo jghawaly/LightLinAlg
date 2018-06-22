@@ -14,6 +14,8 @@ IN THE SOFTWARE.
  **/
 package lightlinalg.linalg;
 
+import java.lang.Math;
+
 public final class LinearAlgebra {
 
 	public static Matrix matrixAdd(Matrix a, Matrix b) {
@@ -239,6 +241,138 @@ public final class LinearAlgebra {
 		identity.set(columnIndex2, columnIndex1, scalar);
 
 		return matrixMultiply(a, identity);
+	}
+	
+	/**
+	 * Calculate the determinant of a 2x2 matrix
+	 * @param a the Matrix
+	 * @return the determinant
+	 */
+	private static double det2x2(Matrix a) {
+		return a.get(0, 0)*a.get(1, 1) - a.get(0, 1)*a.get(1, 0);
+	}
+	
+	/**
+	 * Calculate the determinant of an NxN matrix based off of the minor expansion formula
+	 * @param a the Matrix
+	 * @return the determinant
+	 */
+	private static double detNxN(Matrix a) {
+		double det = 0.0;
+		for(int j=0; j<a.numColumns(); j++) {
+			// In this case, Math.pow(-1.0, i+j)*det(removeRowAndColumn(a, i, j)) is the cofactor of item a.get(i, j)
+			det += a.get(0, j)*Math.pow(-1.0, 0+j)*det(removeRowAndColumn(a, 0, j));
+		}
+		return det;
+	}
+	
+	/**
+	 * Calculate the determinant of an N x N matrix
+	 * @param a the Matrix
+	 * @return determinant of the matrix
+	 */
+	public static double det(Matrix a) {
+		double det = 0;
+		if(!a.isSquare()) {
+			throw new ArithmeticException("Matrix must be square in order to calculate a determinant!");
+		}
+		else {
+			if (a.numRows() == 1) {
+				det = a.get(0, 0);
+			}
+			else if(a.numRows() == 2) {
+				det = det2x2(a);
+			}
+			else {
+				det = detNxN(a);
+			}
+		}
+		
+		return det;
+	}
+	
+	/**
+	 * Remove an entire row and column from a Matrix
+	 * @param a the Matrix to remove the row and column from
+	 * @param rowIndex the index of the row to remove
+	 * @param columnIndex the index of the column to remove
+	 * @return the new Matrix
+	 */
+	public static Matrix removeRowAndColumn(Matrix a, int rowIndex, int columnIndex) {
+		var arr = new double[a.numRows()-1][a.numColumns()-1];
+		
+		// declare row and column iterators for the new array
+		int k = 0;
+		int l = 0;
+		
+		// assign values to new array
+		for(int i=0; i<a.numRows(); i++) {
+			l=0;
+			if(i != rowIndex) {
+				for(int j=0; j<a.numColumns(); j++) {
+					if(j != columnIndex) {
+						arr[k][l] = a.get(i, j);
+						++l;
+					}
+				}
+				++k;
+			} 
+		}
+		var m = new Matrix(arr);
+		//m.prettyPrint();
+		return m;
+	}
+	
+	/**
+	 * Remove an entire column from a Matrix
+	 * @param a the Matrix to remove the column from
+	 * @param columnIndex the index of the column to remove
+	 * @return the new Matrix
+	 */
+	public static Matrix removeColumn(Matrix a, int columnIndex) {
+		var arr = new double[a.numRows()][a.numColumns()-1];
+		
+		// declare column iterator for the new array
+		int l = 0;
+		
+		// assign values to new array
+		for(int i=0; i<a.numRows(); i++) {
+			l=0;
+			for(int j=0; j<a.numColumns(); j++) {
+				if(j != columnIndex) {
+					arr[i][l] = a.get(i, j);
+					++l;
+				}
+			}
+			
+		}
+		
+		return new Matrix(arr);
+	}
+	
+	/**
+	 * Remove an entire row from a Matrix
+	 * @param a the Matrix to remove the row from
+	 * @param rowIndex the index of the row to remove
+	 * @return new Matrix
+	 */
+	public static Matrix removeRow(Matrix a, int rowIndex) {
+		var arr = new double[a.numRows()-1][a.numColumns()];
+		
+		// declare row iterator for the new array
+		int k = 0;
+		
+		// assign values to new array
+		for(int i=0; i<a.numRows(); i++) {
+			if(i != rowIndex) {
+				for(int j=0; j<a.numColumns(); j++) {
+					arr[k][j] = a.get(i, j);
+				}
+				++k;
+			} 
+		}
+		
+		return new Matrix(arr);
 	}
 
 	public static Matrix power(Matrix a, int p) {
