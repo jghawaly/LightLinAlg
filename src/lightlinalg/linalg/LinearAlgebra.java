@@ -244,6 +244,55 @@ public final class LinearAlgebra {
 	}
 	
 	/**
+	 * Calculate the inverse of Matrix a
+	 * @param a the Matrix to calculate the inverse of
+	 * @return the inverse of Matrix a, if existent
+	 */
+	public static Matrix inverse(Matrix a) {
+		// calculate the determinant of the matrix
+		double determinant = det(a);
+		
+		if(determinant!=0.0) {
+			// calculate the adjoint of the matrix
+			var m = adjoint(a);
+			// calculate A^-1 = adjoint(A)/det(A)
+			m.scaleAll(1.0/determinant);
+			
+			return m;
+		} else {
+			throw new ArithmeticException("Matrix has no determinant, thus an inverse cannot be found!"); 
+		}
+	}
+	
+	/**
+	 * Calculate the adjoint of a Matrix, where the adjoint is the transposed cofactor Matrix
+	 * @param a matrix to calculate the adjoint of
+	 * @return the adjoint matrix
+	 */
+	public static Matrix adjoint(Matrix a) {
+		var m = cofactor(a);
+		m.transpose();
+		return m;
+	}
+	
+	/**
+	 * Calculate the cofactor Matrix of a given Matrix
+	 * @param a the given Matrix
+	 * @return cofactor Matrix of a
+	 */
+	public static Matrix cofactor(Matrix a) {
+		var arr = new double[a.numRows()][a.numColumns()];
+		// assign values to new array
+		for(int i=0; i<a.numRows(); i++) {
+			for(int j=0; j<a.numColumns(); j++) {
+				arr[i][j] = Math.pow(-1.0, i+j)*det(removeRowAndColumn(a, i, j));
+			}
+		}
+		
+		return new Matrix(arr);
+	}
+	
+	/**
 	 * Calculate the determinant of a 2x2 matrix
 	 * @param a the Matrix
 	 * @return the determinant
@@ -318,9 +367,8 @@ public final class LinearAlgebra {
 				++k;
 			} 
 		}
-		var m = new Matrix(arr);
-		//m.prettyPrint();
-		return m;
+		
+		return new Matrix(arr);
 	}
 	
 	/**
